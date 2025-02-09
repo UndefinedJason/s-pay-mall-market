@@ -5,6 +5,7 @@ import cn.bugstack.api.dto.CreatePayRequestDTO;
 import cn.bugstack.api.response.Response;
 import cn.bugstack.domain.order.model.entity.PayOrderEntity;
 import cn.bugstack.domain.order.model.entity.ShopCartEntity;
+import cn.bugstack.domain.order.model.valobj.MarketTypeVO;
 import cn.bugstack.domain.order.service.IOrderService;
 import cn.bugstack.types.common.Constants;
 import com.alipay.api.AlipayApiException;
@@ -32,23 +33,28 @@ public class AliPayController implements IPayService {
 
     /**
      * http://localhost:8080/api/v1/alipay/create_pay_order
-     *
+     * <p>
      * {
-     *     "userId": "10001",
-     *     "productId": "100001"
+     * "userId": "10001",
+     * "productId": "100001"
      * }
      */
-    @RequestMapping(value = "create_pay_order", method =  RequestMethod.POST)
+    @RequestMapping(value = "create_pay_order", method = RequestMethod.POST)
     @Override
     public Response<String> createPayOrder(@RequestBody CreatePayRequestDTO createPayRequestDTO) {
         try {
             log.info("商品下单，根据商品ID创建支付单开始 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId());
             String userId = createPayRequestDTO.getUserId();
             String productId = createPayRequestDTO.getProductId();
+            String teamId = createPayRequestDTO.getTeamId();
+            Integer marketType = createPayRequestDTO.getMarketType();
+
             // 下单
             PayOrderEntity payOrderEntity = orderService.createOrder(ShopCartEntity.builder()
                     .userId(userId)
                     .productId(productId)
+                    .teamId(teamId)
+                    .marketTypeVO(MarketTypeVO.valueOf(marketType))
                     .build());
 
             log.info("商品下单，根据商品ID创建支付单完成 userId:{} productId:{} orderId:{}", userId, productId, payOrderEntity.getOrderId());
