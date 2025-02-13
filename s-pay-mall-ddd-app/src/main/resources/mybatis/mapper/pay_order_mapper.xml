@@ -30,7 +30,7 @@
     </insert>
 
     <select id="queryUnPayOrder" parameterType="cn.bugstack.infrastructure.dao.po.PayOrder" resultMap="dataMap">
-        select product_id, product_name, order_id, order_time, total_amount, status, pay_url, market_type, market_deduction_amount, pay_amount,
+        select product_id, product_name, order_id, order_time, total_amount, status, pay_url, market_type, market_deduction_amount, pay_amount
         from pay_order
         where user_id = #{userId} and product_id = #{productId}
         order by id desc
