@@ -1,6 +1,7 @@
 package cn.bugstack.domain.order.adapter.event;
 
 import cn.bugstack.types.event.BaseEvent;
+import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

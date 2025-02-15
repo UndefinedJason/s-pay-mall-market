@@ -2,12 +2,14 @@ package cn.bugstack.trigger.http;
 
 import cn.bugstack.api.IPayService;
 import cn.bugstack.api.dto.CreatePayRequestDTO;
+import cn.bugstack.api.dto.NotifyRequestDTO;
 import cn.bugstack.api.response.Response;
 import cn.bugstack.domain.order.model.entity.PayOrderEntity;
 import cn.bugstack.domain.order.model.entity.ShopCartEntity;
 import cn.bugstack.domain.order.model.valobj.MarketTypeVO;
 import cn.bugstack.domain.order.service.IOrderService;
 import cn.bugstack.types.common.Constants;
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,11 +76,25 @@ public class AliPayController implements IPayService {
         }
     }
 
+    @RequestMapping(value = "group_buy_notify", method = RequestMethod.POST)
+    @Override
+    public String groupBuyNotify(@RequestBody NotifyRequestDTO requestDTO) {
+        log.info("拼团回调，组队完成，结算开始 {}", JSON.toJSONString(requestDTO));
+        try {
+            // 营销结算
+            orderService.changeOrderMarketSettlement(requestDTO.getOutTradeNoList());
+            return "success";
+        } catch (Exception e) {
+            log.info("拼团回调，组队完成，结算失败 {}", JSON.toJSONString(requestDTO));
+            return "error";
+        }
+    }
+
     /**
      * http://xfg-studio.natapp1.cc/api/v1/alipay/alipay_notify_url
      */
     @RequestMapping(value = "alipay_notify_url", method = RequestMethod.POST)
-    public String payNotify(HttpServletRequest request) throws AlipayApiException {
+    public String payNotify(HttpServletRequest request) throws AlipayApiException, ParseException {
         log.info("支付回调，消息接收 {}", request.getParameter("trade_status"));
 
         if (!request.getParameter("trade_status").equals("TRADE_SUCCESS")) {
@@ -112,7 +130,7 @@ public class AliPayController implements IPayService {
         log.info("支付回调，买家付款金额: {}", params.get("buyer_pay_amount"));
         log.info("支付回调，支付回调，更新订单 {}", tradeNo);
 
-        orderService.changeOrderPaySuccess(tradeNo);
+        orderService.changeOrderPaySuccess(tradeNo, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(params.get("gmt_payment")));
 
         return "success";
     }

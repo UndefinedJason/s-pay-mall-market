@@ -5,9 +5,7 @@ import cn.bugstack.domain.order.model.entity.MarketPayDiscountEntity;
 import cn.bugstack.domain.order.model.entity.ProductEntity;
 import cn.bugstack.infrastructure.gateway.IGroupBuyMarketService;
 import cn.bugstack.infrastructure.gateway.ProductRPC;
-import cn.bugstack.infrastructure.gateway.dto.LockMarketPayOrderRequestDTO;
-import cn.bugstack.infrastructure.gateway.dto.LockMarketPayOrderResponseDTO;
-import cn.bugstack.infrastructure.gateway.dto.ProductDTO;
+import cn.bugstack.infrastructure.gateway.dto.*;
 import cn.bugstack.infrastructure.gateway.response.Response;
 import cn.bugstack.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
@@ -15,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
+
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -70,7 +70,7 @@ public class ProductPort implements IProductPort {
             if (null == response) return null;
 
             // 异常判断
-            if (!"0000".equals(response.getCode())){
+            if (!"0000".equals(response.getCode())) {
                 throw new AppException(response.getCode(), response.getInfo());
             }
 
@@ -85,6 +85,33 @@ public class ProductPort implements IProductPort {
         } catch (Exception e) {
             log.error("营销锁单失败{}", userId, e);
             return null;
+        }
+    }
+
+    @Override
+    public void settlementMarketPayOrder(String userId, String orderId, Date orderTime) {
+        SettlementMarketPayOrderRequestDTO requestDTO = new SettlementMarketPayOrderRequestDTO();
+        requestDTO.setSource(source);
+        requestDTO.setChannel(chanel);
+        requestDTO.setUserId(userId);
+        requestDTO.setOutTradeNo(orderId);
+        requestDTO.setOutTradeTime(orderTime);
+
+        try {
+            Call<Response<SettlementMarketPayOrderResponseDTO>> call = groupBuyMarketService.settlementMarketPayOrder(requestDTO);
+
+            // 获取结果
+            Response<SettlementMarketPayOrderResponseDTO> response = call.execute().body();
+            log.info("营销结算{} requestDTO:{} responseDTO:{}", userId, JSON.toJSONString(requestDTO), JSON.toJSONString(response));
+            if (null == response) return;
+
+            // 异常判断
+            if (!"0000".equals(response.getCode())) {
+                throw new AppException(response.getCode(), response.getInfo());
+            }
+
+        } catch (Exception e) {
+            log.error("营销结算失败{}", userId, e);
         }
     }
 
