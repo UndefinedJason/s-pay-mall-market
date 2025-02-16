@@ -26,6 +26,9 @@ public class MessageTextEntity {
     @XStreamAlias("MsgId")
     private String msgId;
 
+    @XStreamAlias("MsgID")
+    private String msgID;
+
     @XStreamAlias("Status")
     private String status;
 
@@ -82,6 +85,14 @@ public class MessageTextEntity {
 
     public void setMsgId(String msgId) {
         this.msgId = msgId;
+    }
+
+    public String getMsgID() {
+        return msgID;
+    }
+
+    public void setMsgID(String msgID) {
+        this.msgID = msgID;
     }
 
     public String getStatus() {
