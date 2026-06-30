@@ -90,10 +90,6 @@ public abstract class AbstractOrderService implements IOrderService {
                     shopCartEntity.getProductId(),
                     orderEntity.getOrderId());
         }
-        if (MarketTypeVO.GROUP_BUY_MARKET.equals(shopCartEntity.getMarketTypeVO())
-                && null == marketPayDiscountEntity) {
-            throw new RuntimeException("拼团订单锁单失败，禁止按原价创建支付单");
-        }
 
         // 创建支付订单
         PayOrderEntity payOrderEntity = doPrepayOrder(shopCartEntity.getUserId(),

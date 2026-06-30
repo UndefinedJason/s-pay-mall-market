@@ -84,7 +84,7 @@ public class ProductPort implements IProductPort {
                     .build();
         } catch (Exception e) {
             log.error("营销锁单失败{}", userId, e);
-            throw new RuntimeException("营销锁单失败", e);
+            return null;
         }
     }
 
