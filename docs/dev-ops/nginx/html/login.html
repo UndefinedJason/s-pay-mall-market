@@ -122,7 +122,7 @@
     var sPayMallUrl = "http://127.0.0.1:80";
 
     document.addEventListener("DOMContentLoaded", function() {
-        const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
+        const fpPromise = import('./js/v4.js')
             .then(FingerprintJS => FingerprintJS.load());
 
         // 获取浏览器指纹 ID

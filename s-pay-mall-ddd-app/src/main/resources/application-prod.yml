@@ -31,7 +31,7 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://mysql:3306/s-pay-mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true
+    url: jdbc:mysql://106.52.179.221:13306/s-pay-mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   hikari:
     pool-name: Retail_HikariCP
@@ -67,6 +67,14 @@ alipay:
   notify_url: http://xfg-studio.natapp1.cc/api/v1/alipay/alipay_notify_url
   return_url: https://gaga.plus
   gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+
+
+sc:
+  group:
+    buy:
+      market:
+        source: s01
+        chanel: c01
 
 # 日志
 logging:
